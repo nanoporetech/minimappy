@@ -49,7 +49,7 @@ extra_requires = {}
 extensions = []
 extensions.append(Extension(
     'minimaplib',
-    sources=[os.path.join('minimappy', 'libminimapy.c'), os.path.join('minimap2', 'format.c')],
+    sources=[os.path.join('minimappy', x) for x in ('libminimapy.c', 'libminimapinit.c')] + [os.path.join('minimap2', 'format.c')],
     include_dirs=['minimap2'],
     extra_compile_args=['-pedantic', '-Wall', '-std=c99', '-march=native', '-ffast-math', '-DUSE_SSE2', '-DNDEBUG'],
     libraries=[],

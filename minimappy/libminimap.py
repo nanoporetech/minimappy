@@ -72,6 +72,36 @@ ffi.cdef("""
   mm_idx_t* get_index(const char* fname);
   void destroy_index(mm_idx_t* index);
 
+  typedef struct {
+    float max_occ_frac;
+    float mid_occ_frac;
+    int sdust_thres;  // score threshold for SDUST; 0 to disable
+    int flag;    // see MM_F_* macros
+
+    int bw;  // bandwidth
+    int max_gap; // break a chain if there are no minimizers in a max_gap window
+    int max_chain_skip;
+    int min_cnt;
+    int min_chain_score;
+
+    float mask_level;
+    float pri_ratio;
+    int best_n;
+
+    int max_join_long, max_join_short;
+    int min_join_flank_sc;
+
+    int a, b, q, e, q2, e2; // matching score, mismatch, gap-open and gap-ext penalties
+    int zdrop;
+    int min_dp_max;
+    int min_ksw_len;
+
+    int max_occ;
+    int mid_occ;
+  } mm_mapopt_t;
+  typedef struct {mm_mapopt_t opt; mm_idx_t *mi;} mm_opt_ind;
+  mm_opt_ind init_opt_ind(int argc, char *argv[]);
+
   ////////////
   // Alignment
   //
@@ -99,7 +129,7 @@ ffi.cdef("""
 
   typedef struct {size_t n; mm_reg1_t* reg;} mm_reg1_v;
 
-  mm_reg1_v align(mm_idx_t* index, char* seq, char* seq_name);
+  mm_reg1_v align(mm_mapopt_t opt, mm_idx_t* index, char* seq, char* seq_name);
 """)
 
 
@@ -116,15 +146,17 @@ class MinimapAligner(object):
             on the minimap command line.
 
         """
-        self.index_file = index.encode()
+        self.index_file = index
         self._cigchar = "MIDSH"
 
-        if options != '':
-            raise NotImplementedError()
-
-        self.index = libmap.get_index(self.index_file)
+        argv = ['minimappy'] + options.split() + [index]
+        argc = len(argv)
+        self._opt_ind = libmap.init_opt_ind(argc,
+            [ffi.new('char[]', x.encode()) for x in argv]
+        )
+        self.opt, self.index = self._opt_ind.opt, self._opt_ind.mi
         if self.index == ffi.NULL:
-            raise ValueError('Failed to load minimap index.')
+            raise ValueError('Failed to parse options.')
 
 
     def __del__(self):
@@ -176,7 +208,7 @@ class MinimapAligner(object):
 
         :returns: tuple of :class:`Alignment`
         """
-        data = libmap.align(self.index, seq.encode(), seq_name.encode())
+        data = libmap.align(self.opt, self.index, seq.encode(), seq_name.encode())
         res = [self._build_alignment(data.reg[i], seq, data.reg[0]) for i in range(data.n)]
         return res
 

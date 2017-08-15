@@ -94,19 +94,13 @@ MODULE_API void destroy_index(mm_idx_t* index){
 	mm_idx_destroy(index);
 }
 
-MODULE_API mm_reg1_v align(mm_idx_t* mi, char* seq, char* seq_name) {
+MODULE_API mm_reg1_v align(mm_mapopt_t opt, mm_idx_t* mi, char* seq, char* seq_name) {
 	mm_verbose = 2;
-
-	mm_mapopt_t opt;
-	mm_mapopt_init(&opt);
-	mm_mapopt_update(&opt, mi);
 	opt.flag |= MM_F_CIGAR;
-
 	mm_tbuf_t* tbuf = mm_tbuf_init();
 	int n_reg;
 	const mm_reg1_t* reg = mm_map(mi, strlen(seq), seq, &n_reg, tbuf, &opt, 0);
 	mm_tbuf_destroy(tbuf);
-
 	return (mm_reg1_v) {n_reg, reg};
 }
 
