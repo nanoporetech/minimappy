@@ -1,6 +1,16 @@
 minimappy
 =========
 
+Status
+------
+
+Since the time of writing Heng Li, the author of minimap2, has provided a
+python binding in the minimap2 source and at https://pypi.python.org/pypi/mappy.
+Users are strongly encouraged to use Heng's python library rather that
+the version presented here. Despite its short life, the latter will be no
+longer supported out of deference to Heng's version.
+
+
 [![Build Status](https://travis-ci.org/nanoporetech/minimappy.svg?branch=master)](https://travis-ci.org/nanoporetech/minimappy)
 
 Python bindings to `minimap2` aligner; sufficient to load and index and perform
