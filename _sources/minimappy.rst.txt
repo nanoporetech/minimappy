@@ -1,0 +1,22 @@
+minimappy package
+=================
+
+Submodules
+----------
+
+minimappy\.libminimap module
+----------------------------
+
+.. automodule:: minimappy.libminimap
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: minimappy
+    :members:
+    :undoc-members:
+    :show-inheritance:

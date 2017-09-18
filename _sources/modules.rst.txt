@@ -1,0 +1,7 @@
+minimappy
+=========
+
+.. toctree::
+   :maxdepth: 4
+
+   minimappy
